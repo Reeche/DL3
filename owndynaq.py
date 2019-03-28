@@ -75,7 +75,6 @@ class DynaQ(object):
         s = self._state
         a = epsilon_greedy(self._q[DynaQ.get_obs(self, self._state)], 0.1)
 
-
         reward, discount, next_state = DynaQ.steps(self, s, a)
 
         td_target = reward + discount * a
@@ -88,7 +87,7 @@ class DynaQ(object):
             self.model[(DynaQ.get_obs(self, s))] = dict()
         self.model[DynaQ.get_obs(self, s)][a] = [(next_state), reward]
 
-        for _ in range(30):
+        for _ in range(self._num_offline_updates):
             # select random field from _m which is not empty
             state_index = self.rand.choice(range(len(self.model.keys())))
             state = list(self.model)[state_index]
