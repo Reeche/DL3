@@ -1,10 +1,12 @@
 from setup import *
 
+
 class DynaQ(object):
 
-    def __init__(self, number_of_states, number_of_actions, initial_state, behaviour_policy, num_offline_updates=0, step_size=0.1, rand=np.random, discount=0.9):
+    def __init__(self, number_of_states, number_of_actions, initial_state, behaviour_policy, num_offline_updates=0,
+                 step_size=0.1, rand=np.random, discount=0.9):
         self._q = np.zeros((number_of_states, number_of_actions))
-        #self._m = np.zeros((number_of_states, number_of_actions))
+        # self._m = np.zeros((number_of_states, number_of_actions))
         self.model = dict()
         self.rand = rand
         self._state = initial_state
@@ -29,15 +31,12 @@ class DynaQ(object):
         self._number_of_states = np.prod(np.shape(self._layout))
         self._discount = discount
 
-
     def get_obs(self, s):
         y, x = s
         return y * self._layout.shape[1] + x
 
-
-
     def steps(self, state, action):
-        #print("steps state, action", state, action)
+        # print("steps state, action", state, action)
         y, x = state
 
         if action == 0:  # up
@@ -67,8 +66,6 @@ class DynaQ(object):
         self._state = new_state
         return reward, discount, DynaQ.get_obs(self, self._state)
 
-
-
     @property
     def q_values(self):
         return self._q
@@ -76,8 +73,7 @@ class DynaQ(object):
     def step(self):
 
         s = self._state
-        a = random_policy(self._q)
-        #print(self._q, a)
+        a = epsilon_greedy(self._q[DynaQ.get_obs(self, self._state)], 0.1)
 
 
         reward, discount, next_state = DynaQ.steps(self, s, a)
@@ -86,28 +82,25 @@ class DynaQ(object):
         td_error = td_target - self._q[DynaQ.get_obs(self, s)][a]
         self._q[DynaQ.get_obs(self, s)][a] += self._step_size * td_error
 
-
         # update model
-        #print("tupel", DynaQ.get_obs(self, s))
+        # print("tupel", DynaQ.get_obs(self, s))
         if (DynaQ.get_obs(self, s)) not in self.model.keys():
             self.model[(DynaQ.get_obs(self, s))] = dict()
         self.model[DynaQ.get_obs(self, s)][a] = [(next_state), reward]
 
-        # select random field from _m which is not empty
-        state_index = self.rand.choice(range(len(self.model.keys())))
-        state = list(self.model)[state_index]
-        action_index = self.rand.choice(range(len(self.model[state].keys())))
-        action = list(self.model[state])[action_index]
-        next_state, reward = self.model[state][action]
+        for _ in range(30):
+            # select random field from _m which is not empty
+            state_index = self.rand.choice(range(len(self.model.keys())))
+            state = list(self.model)[state_index]
+            action_index = self.rand.choice(range(len(self.model[state].keys())))
+            action = list(self.model[state])[action_index]
+            next_state, reward = self.model[state][action]
 
-        td_target = reward + discount * a
-        td_error = td_target - self._q[next_state][a]
-        self._q[next_state][a] += self._step_size * td_error
-
+            td_target = reward + discount * a
+            td_error = td_target - self._q[next_state][a]
+            self._q[next_state][a] += self._step_size * td_error
 
         return action
-
-
 
 
 grid = Grid()
