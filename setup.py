@@ -175,8 +175,8 @@ def run_experiment(env, agent, number_of_steps):
         action = 0
     for i in range(number_of_steps):
         reward, discount, next_state = env.step(action)
-        #action = agent.step(reward, discount, next_state)
-        action = agent.step()
+        action = agent.step(reward, discount, next_state)
+        #action = agent.step()
         mean_reward += (reward - mean_reward) / (i + 1.)
 
     return mean_reward
