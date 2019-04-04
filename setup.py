@@ -143,13 +143,13 @@ class FeatureGrid(Grid):
 # @title Show gridworlds
 
 # Plot tabular environments
-grid = Grid()
-alt_grid = AltGrid()
-print("A grid world")
-grid.plot_grid()
+#grid = Grid()
+#alt_grid = AltGrid()
+#print("A grid world")
+#grid.plot_grid()
 #plt.show()
-print("\nAn alternative grid world")
-alt_grid.plot_grid()
+#print("\nAn alternative grid world")
+#alt_grid.plot_grid()
 #plt.show()
 
 # Plot features of each state for non tabular version of the environment.
@@ -280,7 +280,8 @@ def plot_greedy_policy(grid, q):
     action_names = [r"$\uparrow$", r"$\rightarrow$", r"$\downarrow$", r"$\leftarrow$"]
     greedy_actions = np.argmax(q, axis=2)
     grid.plot_grid()
-    plt.hold('on')
+    #plt.hold(True)
+    #plt.hold('on')
     for i in range(9):
         for j in range(10):
             action_name = action_names[greedy_actions[i, j]]
@@ -291,7 +292,8 @@ def plot_greedy_policy_v2(grid, pi):
     action_names = [r"$\uparrow$", r"$\rightarrow$", r"$\downarrow$", r"$\leftarrow$"]
     greedy_actions = np.argmax(pi, axis=2)
     grid.plot_grid()
-    plt.hold('on')
+    #plt.hold(True)
+    #plt.hold('on')
 
     h, w = grid._layout.shape
     for y in range(2, h - 2):

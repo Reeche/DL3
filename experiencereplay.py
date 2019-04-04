@@ -15,7 +15,6 @@ class ExperienceQ(object):
         self._action = 0
         self._buffer = []
 
-
     @property
     def q_values(self):
         return self._q
@@ -36,7 +35,7 @@ class ExperienceQ(object):
 
         for _ in range(self._num_offline_updates):
             index = np.random.choice(len(self._buffer))
-            [bs, ba, br, bg, bnext_s] = self._buffer[index]
+            bs, ba, br, bg, bnext_s = self._buffer[index]
 
             self._q[bs][ba] += self._step_size * (br + bg * np.max(self._q[bnext_s]) - self._q[bs][ba])
 
